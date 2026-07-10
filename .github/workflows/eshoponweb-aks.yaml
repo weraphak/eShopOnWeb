@@ -89,3 +89,4 @@ jobs:
             .k8s/service.yaml
           images: |
             ${{ env.REGISTRY }}/${{ env.TAG_NAME }}
+          namespace: eshoponweb-user003
