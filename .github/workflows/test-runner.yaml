@@ -1,0 +1,13 @@
+name: Test runner
+on:
+  workflow_dispatch
+jobs:
+  test-runner:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v7.0.0
+      - name: Run Tests
+        run: |
+          echo "Running tests..."
+          # Add your test commands here
