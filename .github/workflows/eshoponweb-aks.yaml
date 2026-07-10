@@ -20,8 +20,7 @@ jobs:
             password: ${{ secrets.ACR_PASSWORD }}
 
       - name: Build and push Docker image
-        uses: docker/build-push-action@v7.3.0
-        with:
-          context: .
-          push: true
-          tags: ${{ env.ACR_LOGIN_SERVER }}/${{ env.TAG_NAME }}
+        run: |
+          find . -iname "dockerfile*";
+          docker build -t ${{ env.ACR_LOGIN_SERVER }}/${{ env.TAG_NAME }} .;
+          docker push ${{ env.ACR_LOGIN_SERVER }}/${{ env.TAG_NAME }}
