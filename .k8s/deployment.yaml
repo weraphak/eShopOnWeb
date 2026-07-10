@@ -1,37 +1,23 @@
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: eshoponweb-user003
-
----
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  namespace: eshoponweb-user003
-  name: webapp
+  name: eshoponweb-deployment
   labels:
-    app: sample-app
+    app: eshoponweb
 spec:
   replicas: 1
   selector:
     matchLabels:
-      service: webapp
+      app: eshoponweb
   template:
     metadata:
       labels:
-        app: sample-app
-        service: webapp
+        app: eshoponweb
     spec:
       containers:
-        - name: webapp
-          image: aistraining.azurecr.io/eshoponwebapp-user003:1.0.0
-          imagePullPolicy: IfNotPresent
-          ports:
-            - containerPort: 80
-              protocol: TCP
-          env:
-            - name: ASPNETCORE_URLS
-              value: http://+:80
-            - name: WebApiBaseAddress
-              value: http://webapi
+      - name: eshoponweb-app
+        image: aistraining.azurecr.io/eshoponwebapp-user003:1.0.0
+        ports:
+        - containerPort: 80
+      imagePullSecrets:
+      - name: aks-secret
