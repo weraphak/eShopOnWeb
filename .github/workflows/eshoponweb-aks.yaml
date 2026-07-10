@@ -2,7 +2,9 @@ name: Container Workflow
 on: workflow_dispatch
 
 env:
-  ACR_LOGIN_SERVER: aistraining.azurecr.io
+  REGISTRY: aistraining.azurecr.io
+  USERNAME: ${{ secrets.ACR_USERNAME }}
+  PASSWORD: ${{ secrets.ACR_PASSWORD }}
   TAG_NAME: eshoponwebapp-user003:1.0.0
 
 jobs:
@@ -15,12 +17,12 @@ jobs:
       - name: ACR Login
         uses: docker/login-action@v4.4.0
         with:
-            registry: ${{ env.ACR_LOGIN_SERVER }}
-            username: ${{ secrets.ACR_USERNAME }}
-            password: ${{ secrets.ACR_PASSWORD }}
+            registry: ${{ env.REGISTRY }}
+            username: ${{ env.USERNAME }}
+            password: ${{ env.PASSWORD }}
 
       - name: Build and push Docker image
         run: |
           find . -iname "dockerfile*";
-          docker build -t ${{ env.ACR_LOGIN_SERVER }}/${{ env.TAG_NAME }} .;
-          docker push ${{ env.ACR_LOGIN_SERVER }}/${{ env.TAG_NAME }}
+          docker build -t ${{ env.REGISTRY }}/${{ env.TAG_NAME }} .
+          docker push ${{ env.REGISTRY }}/${{ env.TAG_NAME }}
