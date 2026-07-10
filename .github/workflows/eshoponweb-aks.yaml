@@ -30,6 +30,7 @@ jobs:
           docker push ${{ env.REGISTRY }}/${{ env.TAG_NAME }}
 
   deploy-to-aks:
+    needs: build-container
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -39,14 +40,14 @@ jobs:
         uses: actions/checkout@v7.0.0
 
       - name: Set AKS Context
-        uses: azure/aks-set-context@v1.3.0
+        uses: azure/aks-set-context@v3
         with:
-          credentials: ${{ secrets.AZURE_CREDENTIALS }}
+          subscription: ${{ secrets.AZURE_CREDENTIALS }}
           resource-group: ${{ env.AKS_RESOURCE_GROUP }}
           cluster-name: ${{ env.AKS_CLUSTER_NAME }}
 
       - name: Set up kubectl
-        uses: azure/k8s-deploy@v3.11.0
+        uses: azure/k8s-deploy@v4.9
         with:
           manifests: |
             .k8s/deployment.yaml
