@@ -4,6 +4,8 @@ on: workflow_dispatch
 env:
   REGISTRY: aistraining.azurecr.io
   TAG_NAME: eshoponwebapp-user003:1.0.0
+  AKS_RESOURCE_GROUP: rg-003
+  AKS_CLUSTER_NAME: aks-demo
 
 jobs:
   build-container:
@@ -26,3 +28,28 @@ jobs:
         run: |
           docker build -f src/Web/Dockerfile -t ${{ env.REGISTRY }}/${{ env.TAG_NAME }} .
           docker push ${{ env.REGISTRY }}/${{ env.TAG_NAME }}
+
+  deploy-to-aks:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v7.0.0
+
+      - name: Set AKS Context
+        uses: azure/aks-set-context@v1.3.0
+        with:
+          credentials: ${{ secrets.AZURE_CREDENTIALS }}
+          resource-group: ${{ env.AKS_RESOURCE_GROUP }}
+          cluster-name: ${{ env.AKS_CLUSTER_NAME }}
+
+      - name: Set up kubectl
+        uses: azure/k8s-deploy@v3.11.0
+        with:
+          manifests: |
+            .k8s/deployment.yaml
+            .k8s/service.yaml
+          images: |
+            ${{ env.REGISTRY }}/${{ env.TAG_NAME }}
