@@ -39,10 +39,14 @@ jobs:
       - name: Checkout Source Code
         uses: actions/checkout@v7.0.0
 
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          
       - name: Set AKS Context
         uses: azure/aks-set-context@v3
         with:
-          credentials: ${{ secrets.AZURE_CREDENTIALS }}
           resource-group: ${{ env.AKS_RESOURCE_GROUP }}
           cluster-name: ${{ env.AKS_CLUSTER_NAME }}
 
