@@ -1,12 +1,11 @@
 name: Container Workflow
 on: workflow_dispatch
-
 env:
   REGISTRY: aistraining.azurecr.io
   TAG_NAME: eshoponwebapp-user003:1.0.0
   AKS_RESOURCE_GROUP: rg-003
   AKS_CLUSTER_NAME: aks-demo
-
+  AZURE_SUBSCRIPTION_ID: 06c626d1-2f07-4d7d-bea5-81ec4cb39cda
 jobs:
   build-container:
     runs-on: ubuntu-latest
@@ -16,14 +15,12 @@ jobs:
     steps:
       - name: Checkout Source Code
         uses: actions/checkout@v7.0.0
-
       - name: ACR Login
         uses: docker/login-action@v4.4.0
         with:
             registry: ${{ env.REGISTRY }}
             username: ${{ secrets.ACR_USERNAME }}
             password: ${{ secrets.ACR_PASSWORD }}
-
       - name: Build and Push Image
         run: |
           docker build -f src/Web/Dockerfile -t ${{ env.REGISTRY }}/${{ env.TAG_NAME }} .
@@ -43,12 +40,24 @@ jobs:
         uses: azure/login@v2
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
-          
+
+      - name: Verify Subscription and Cluster Visibility
+        run: |
+          echo "Current subscription:"
+          az account show --output table
+          echo "Resource group check:"
+          az group show --name ${{ env.AKS_RESOURCE_GROUP }} --output table
+          echo "AKS clusters visible to this identity:"
+          az aks list --output table
+          echo "Target cluster check:"
+          az aks show --resource-group ${{ env.AKS_RESOURCE_GROUP }} --name ${{ env.AKS_CLUSTER_NAME }} --output table
+
       - name: Set AKS Context
-        uses: azure/aks-set-context@v3
+        uses: azure/aks-set-context@v4
         with:
           resource-group: ${{ env.AKS_RESOURCE_GROUP }}
           cluster-name: ${{ env.AKS_CLUSTER_NAME }}
+          subscription: ${{ env.AZURE_SUBSCRIPTION_ID }}
 
       - name: Set up kubectl
         uses: azure/k8s-deploy@v4.9
