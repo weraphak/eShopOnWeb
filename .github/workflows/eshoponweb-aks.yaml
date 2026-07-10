@@ -3,11 +3,12 @@ on: workflow_dispatch
 env:
   REGISTRY: aistraining.azurecr.io
   TAG_NAME: eshoponwebapp-user003:1.0.0
-  AKS_RESOURCE_GROUP: rg-003
+  AKS_RESOURCE_GROUP: ais-training
   AKS_CLUSTER_NAME: aks-demo
   AZURE_SUBSCRIPTION_ID: 06c626d1-2f07-4d7d-bea5-81ec4cb39cda
 jobs:
   build-container:
+    if: false
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -27,7 +28,7 @@ jobs:
           docker push ${{ env.REGISTRY }}/${{ env.TAG_NAME }}
 
   deploy-to-aks:
-    needs: build-container
+    #needs: build-container
     runs-on: ubuntu-latest
     permissions:
       contents: read
