@@ -80,19 +80,12 @@ jobs:
           kubectl get namespaces
           echo "Pods in the target namespace:"
           kubectl get pods -n eshoponweb-user003
-        
-      - name: Verify Deployment and Service
-        run: |
-          echo "Checking Deployment:"
-          kubectl get deployment eshoponweb-deployment -n eshoponweb-user003
-          echo "Checking Service:"
-          kubectl get service eshoponweb-service -n eshoponweb-user003
 
-      #- name: Set up kubectl
-      #  uses: azure/k8s-deploy@v4.9
-      #  with:
-      #    manifests: |
-      #      .k8s/deployment.yaml
-      #      .k8s/service.yaml
-      #    images: |
-      #      ${{ env.REGISTRY }}/${{ env.TAG_NAME }}
+      - name: Set up kubectl
+        uses: azure/k8s-deploy@v4.9
+        with:
+          manifests: |
+            .k8s/deployment.yaml
+            .k8s/service.yaml
+          images: |
+            ${{ env.REGISTRY }}/${{ env.TAG_NAME }}
