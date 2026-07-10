@@ -3,6 +3,8 @@ on: workflow_dispatch
 
 env:
   ACR_LOGIN_SERVER: aistraining.azurecr.io
+  TAG_NAME: eshoponwebapp-user003:1.0.0
+  IMAGE_NAME: ${{ vars.ACR_LOGIN_SERVER }}/${{ vars.TAG_NAME }}
 
 jobs:
   build-container:
@@ -20,4 +22,6 @@ jobs:
             password: ${{ secrets.ACR_PASSWORD }}
 
       - name: Build and push Docker image
-        uses: docker/build-push-action@v5
+        run: |
+            docker build . -t ${{ env.IMAGE_NAME }}
+            docker push ${{ env.IMAGE_NAME }}
